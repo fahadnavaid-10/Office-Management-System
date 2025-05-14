@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}NSAF Company - Attendance{% endblock %}
+{% block attendance_active %}active{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <h1 class="page-title">Attendance Information</h1>
+    
+    <div class="search-container">
+        <form action="{{ url_for('attendance') }}" method="POST" class="search-form">
+            <div class="form-group">
+                <label for="employee_id">Employee ID:</label>
+                <input type="text" id="employee_id" name="employee_id" required placeholder="Enter Employee ID">
+            </div>
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
+    
+    {% if attendance %}
+    <div class="result-container">
+        <div class="attendance-card">
+            <div class="attendance-header">
+                <div class="attendance-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="attendance-title">
+                    <h2>{{ attendance.employee_name }}</h2>
+                    <p>ID: {{ attendance.employee_id }}</p>
+                </div>
+            </div>
+            
+            <div class="attendance-summary">
+                <div class="summary-item">
+                    <div class="summary-icon present">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="summary-details">
+                        <h3>{{ attendance.present_days }}</h3>
+                        <p>Present Days</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-icon absent">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="summary-details">
+                        <h3>{{ attendance.absent_days }}</h3>
+                        <p>Absent Days</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-icon late">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="summary-details">
+                        <h3>{{ attendance.late_days }}</h3>
+                        <p>Late Days</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-icon leave">
+                        <i class="fas fa-calendar-minus"></i>
+                    </div>
+                    <div class="summary-details">
+                        <h3>{{ attendance.leave_days }}</h3>
+                        <p>Leave Days</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 
+            <div class="attendance-calendar">
+                <h3>Monthly Attendance</h3>
+                <div class="calendar-header">
+                    <div class="month-selector">
+                        <button class="month-btn prev"><i class="fas fa-chevron-left"></i></button>
+                        <span class="current-month">{{ attendance.current_month }}</span>
+                        <button class="month-btn next"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="calendar-grid">
+                    <div class="weekday">Sun</div>
+                    <div class="weekday">Mon</div>
+                    <div class="weekday">Tue</div>
+                    <div class="weekday">Wed</div>
+                    <div class="weekday">Thu</div>
+                    <div class="weekday">Fri</div>
+                    <div class="weekday">Sat</div>
+                    
+                    {% for day in attendance.calendar_days %}
+                    <div class="day {{ day.status }} {% if day.current %}current{% endif %} {% if not day.in_month %}not-in-month{% endif %}">
+                        <span class="day-number">{{ day.number }}</span>
+                        {% if day.status == 'present' %}
+                        <span class="day-icon"><i class="fas fa-check"></i></span>
+                        {% elif day.status == 'absent' %}
+                        <span class="day-icon"><i class="fas fa-times"></i></span>
+                        {% elif day.status == 'late' %}
+                        <span class="day-icon"><i class="fas fa-clock"></i></span>
+                        {% elif day.status == 'leave' %}
+                        <span class="day-icon"><i class="fas fa-calendar-minus"></i></span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            -->
+            <div class="attendance-details">
+                <h3>Recent Attendance</h3>
+                <div class="attendance-table">
+                    <div class="table-header">
+                        <div class="header-cell">Date</div>
+                        <div class="header-cell">Status</div>
+                        <div class="header-cell">Check In</div>
+                        <div class="header-cell">Check Out</div>
+                        <div class="header-cell">Working Hours</div>
+                    </div>
+                    {% for record in attendance.recent_records %}
+                    <div class="table-row">
+                        <div class="table-cell">{{ record.date }}</div>
+                        <div class="table-cell">
+                            <span class="status-badge {{ record.status }}">{{ record.status }}</span>
+                        </div>
+                        <div class="table-cell">{{ record.check_in }}</div>
+                        <div class="table-cell">{{ record.check_out }}</div>
+                        <div class="table-cell">{{ record.working_hours }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

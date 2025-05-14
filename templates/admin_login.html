@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}NSAF Company - Admin Login{% endblock %}
+{% block admin_active %}active{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <h1 class="page-title">Admin Login</h1>
+    
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h2>Administrator Access</h2>
+            </div>
+            
+            {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+            {% endif %}
+            
+            <form action="{{ url_for('admin_login') }}" method="POST" class="login-form">
+                <div class="form-group">
+                    <label for="admin_id">Admin ID:</label>
+                    <input type="text" id="admin_id" name="admin_id" required placeholder="Enter your admin ID">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

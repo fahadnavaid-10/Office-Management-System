@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}NSAF Company - Department{% endblock %}
+{% block department_active %}active{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <h1 class="page-title">Department Information</h1>
+    
+    <div class="search-container">
+        <form action="{{ url_for('department') }}" method="POST" class="search-form">
+            <div class="form-group">
+                <label for="department_name">Department Name:</label>
+                <input type="text" id="department_name" name="dept-name" required placeholder="Enter Department Name">
+            </div>
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
+    
+    {% if department %}
+    <div class="result-container">
+        <div class="department-card">
+            <div class="department-header">
+                <div class="department-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="department-title">
+                    <h2>{{ department.name }}</h2>
+                    <p>Department ID: {{ department.DeptId }}</p>
+                </div>
+            </div>
+            <div class="department-details">
+                <div class="detail-item">
+                    <span class="label">Area:</span>
+                    <span class="value">{{ department.area }}</span>
+                </div>
+            </div>
+            
+            <div class="department-employees">
+                <h3>Department Employees</h3>
+                <div class="employee-list">
+                    {% for employee in department.employees %}
+                    <div class="employee-item">
+                        <div class="employee-info">
+                            <span class="employee-name">Employee ID: {{ employee.empno }}</span>
+                            <span class="employee-position">Name: {{ employee.name}}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

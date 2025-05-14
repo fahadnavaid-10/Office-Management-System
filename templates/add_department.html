@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}NSAF Company - Add Department{% endblock %}
+{% block admin_active %}active{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <h1 class="page-title">Add New Department</h1>
+    
+    <div class="breadcrumb">
+        <a href="{{ url_for('admin_panel') }}">Admin Panel</a> &gt; Add Department
+    </div>
+    
+    {% if success %}
+    <div class="alert alert-success">
+        {{ success }}
+    </div>
+    {% endif %}
+    
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    <div class="form-container">
+        <form action="{{ url_for('add_department') }}" method="POST" class="data-form" id="departmentForm">
+            <div class="form-group">
+                <label for="name">Department Name:</label>
+                <input type="text" id="name" name="name" required maxlength="50" placeholder="Department name">
+                <small>Maximum 50 characters</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="area">Area:</label>
+                <input type="text" id="area" name="area" required maxlength="100" placeholder="Department area/location">
+                <small>Maximum 100 characters</small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Add Department</button>
+                <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('admin_panel') }}'">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

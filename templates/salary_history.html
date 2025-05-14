@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}NSAF Company - Salary History{% endblock %}
+{% block salary_history_active %}active{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <h1 class="page-title">Salary History</h1>
+    
+    <div class="search-container">
+        <form action="{{ url_for('salary_history') }}" method="POST" class="search-form">
+            <div class="form-group">
+                <label for="employee_id">Employee ID:</label>
+                <input type="text" id="employee_id" name="emp-id" required placeholder="Enter Employee ID">
+            </div>
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
+    
+    {% if salary_history %}
+    <div class="result-container">
+        <div class="history-card">
+            <div class="history-header">
+                <div class="history-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="history-title">
+                    <h2>{{ salary_history.Empname }}</h2>
+                    <p>Employee ID: {{ salary_history.empno }}</p>
+                </div>
+            </div>
+            
+            <div class="history-chart">
+                <h3>Salary Progression</h3>
+                <div class="chart-container">
+                    <div class="chart-bars">
+                        {% for item in salary_history.history %}
+                        <div class="chart-item">
+                            <div class="chart-bar-wrapper">
+                                <div class="chart-bar" style="height: {{ item.percentage }}%"></div>
+                            </div>
+                            <div class="chart-label">${{ item.amount }}</div>
+                            <div class="chart-date">{{ item.date }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="history-details">
+                <h3>Detailed History</h3>
+                <div class="history-table">
+                    <div class="table-header">
+                        <div class="header-cell">Date</div>
+                        <div class="header-cell">Amount</div>
+                        <div class="header-cell">Change</div>
+                        <div class="header-cell">Reason</div>
+                    </div>
+                    {% for item in salary_history.history %}
+                    <div class="table-row">
+                        <div class="table-cell">{{ item.date }}</div>
+                        <div class="table-cell">${{ item.amount }}</div>
+                        <div class="table-cell {% if item.change > 0 %}positive{% elif item.change < 0 %}negative{% endif %}">
+                            {{ item.change_formatted }}
+                        </div>
+                        <div class="table-cell">{{ item.reason }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

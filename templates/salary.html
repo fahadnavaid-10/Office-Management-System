@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}NSAF Company - Salary{% endblock %}
+{% block salary_active %}active{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <h1 class="page-title">Salary Information</h1>
+    
+    <div class="search-container">
+        <form action="{{ url_for('salary') }}" method="POST" class="search-form">
+            <div class="form-group">
+                <label for="employee_id">Employee ID:</label>
+                <input type="text" id="employee_id" name="employee_id" required placeholder="Enter Employee ID">
+            </div>
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
+    
+    {% if salary %}
+    <div class="result-container">
+        <div class="salary-card">
+            <div class="salary-header">
+                <div class="salary-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="salary-title">
+                    <h2>{{ salary.Empname }}</h2>
+                    <p>Employee ID: {{ salary.EmpNo }}</p>
+                </div>
+            </div>
+            <div class="salary-details">
+                <div class="detail-item">
+                    <span class="label">Salary Type:</span>
+                    <span class="value">{{ salary.salarytype }}</span>
+                </div>
+                {% if salary.per_day_rate %}
+                <div class="detail-item">
+                    <span class="label">Per Day Rate:</span>
+                    <span class="value">${{ salary.per_day_rate }}</span>
+                </div>
+                {%else%}
+                <div class="detail-item total">
+                    <span class="label">Net Salary:</span>
+                    <span class="value">${{ salary.net_salary }}</span>
+                </div> 
+
+                {% endif %}
+                <div class="detail-item">
+                    <span class="label">Bonus:</span>
+                    <span class="value">${{ salary.bonus }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Allowances:</span>
+                    <span class="value">${{ salary.allowances }}</span>
+                </div>
+
+                
+                
+            </div>
+            
+            
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

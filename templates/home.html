@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}NSAF Company - Home{% endblock %}
+{% block home_active %}active{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="main-heading">Welcome to NSAF Company</h1>
+        <p class="sub-heading">Your trusted HR & Payroll Solution</p>
+        <button id="statsBtn" class="btn-animated">View Stats</button>
+    </div>
+</div>
+
+<div id="statsOverlay" class="overlay">
+    <div class="stats-card">
+        <div class="close-btn" id="closeStats">&times;</div>
+        <h2>Company Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <i class="fas fa-users"></i>
+                <h3>Total Employees</h3>
+                <p>{{ total_employees }}</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-building"></i>
+                <h3>Departments</h3>
+                <p>{{ total_departments }}</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-user-check"></i>
+                <h3>Active Projects</h3>
+                <p>4</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-chart-line"></i>
+                <h3>Growth Rate</h3>
+                <p>80%</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
