@@ -300,23 +300,44 @@ def add_employee():
         if not all([name, address, phone, department_id, manager_id]):
             return render_template('add_employee.html', error='All fields are required.')
 
-        insert_query = text('''
-            INSERT INTO employee (name, address, phone_number, department_id, manager_id)
-            VALUES (:name, :address, :phone, :department_id, :manager_id)
-        ''')
+        try:
+            # Optional: Validate foreign keys before insert (can be expanded)
+            dept_exists = db.session.execute(
+                text("SELECT 1 FROM department WHERE DeptID = :dept_id"),
+                {'dept_id': department_id}
+            ).first()
+            manager_exists = db.session.execute(
+                text("SELECT 1 FROM employee WHERE EmpNo = :mgr_id"),
+                {'mgr_id': manager_id}
+            ).first()
 
-        db.session.execute(insert_query, {
-            'name': name,
-            'address': address,
-            'phone': phone,
-            'department_id': department_id,
-            'manager_id': manager_id
-        })
-        db.session.commit()
+            if not dept_exists:
+                return render_template('add_employee.html', error='Invalid Department ID.')
+            if not manager_exists:
+                return render_template('add_employee.html', error='Invalid Manager ID.')
 
-        return render_template('add_employee.html', success='Employee added successfully.')
+            insert_query = text('''
+                INSERT INTO employee (name, address, phone_number, department_id, manager_id)
+                VALUES (:name, :address, :phone, :department_id, :manager_id)
+            ''')
+
+            db.session.execute(insert_query, {
+                'name': name,
+                'address': address,
+                'phone': phone,
+                'department_id': department_id,
+                'manager_id': manager_id
+            })
+            db.session.commit()
+
+            return render_template('add_employee.html', success='Employee added successfully.')
+
+        except Exception as e:
+            db.session.rollback()
+            return render_template('add_employee.html', error=f"Error: {str(e)}")
 
     return render_template('add_employee.html')
+
 
 @app.route('/add_department', methods=['GET', 'POST'])
 def add_department():
@@ -330,18 +351,23 @@ def add_department():
         if not all([name, area]):
             return render_template('add_department.html', error='All fields are required.')
 
-        insert_query = text('''
-            INSERT INTO department (name, area)
-            VALUES (:name, :area)
-        ''')
+        try:
+            insert_query = text('''
+                INSERT INTO department (name, area)
+                VALUES (:name, :area)
+            ''')
 
-        db.session.execute(insert_query, {
-            'name': name,
-            'area': area
-        })
-        db.session.commit()
+            db.session.execute(insert_query, {
+                'name': name,
+                'area': area
+            })
+            db.session.commit()
 
-        return render_template('add_department.html', success='Department added successfully.')
+            return render_template('add_department.html', success='Department added successfully.')
+
+        except Exception as e:
+            db.session.rollback()
+            return render_template('add_department.html', error=f"Error: {str(e)}")
 
     return render_template('add_department.html')
 
