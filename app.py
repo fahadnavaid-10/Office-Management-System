@@ -1,9 +1,6 @@
 from flask import Flask, render_template ,request, redirect, url_for,session
-import calendar
-from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
-import mysql.connector
 from datetime import datetime, timedelta, date
 import calendar
 
@@ -83,22 +80,11 @@ def attendance():
                 employee_name = emp_name_result[0]
 
                 # Count status types
-                count_query = text("""
-                    SELECT Status, COUNT(*) 
-                    FROM attendance 
-                    WHERE EmpNo = :emp_id 
-                    GROUP BY Status
-                """)
+                count_query = text("SELECT Status, COUNT(*) FROM attendance WHERE EmpNo = :emp_id GROUP BY Status")
                 counts = dict(db.session.execute(count_query, {'emp_id': emp_id}).fetchall())
 
                 # Get recent attendance records
-                recent_query = text("""
-                    SELECT Date, Status 
-                    FROM attendance 
-                    WHERE EmpNo = :emp_id 
-                    ORDER BY Date DESC 
-                    LIMIT 10
-                """)
+                recent_query = text("SELECT Date, Status FROM attendance WHERE EmpNo = :emp_id ORDER BY Date DESC LIMIT 10")
                 recent_rows = db.session.execute(recent_query, {'emp_id': emp_id}).fetchall()
 
                 attendance = {
@@ -160,7 +146,7 @@ def salary():
                     salary_data['net_salary'] = base_salary
                 elif salary_type == 'PerDay':
                     salary_data['per_day_rate'] = per_day_rate or 0
-                    salary_data['net_salary'] = 0  # Net salary not applicable for PerDay
+                    salary_data['net_salary'] = 0  # Net salary not for PerDay
                 else:
                     salary_data['net_salary'] = 0
 
@@ -185,7 +171,7 @@ def salary_history():
             emp_name_result = db.session.execute(emp_name_query, {'emp_id': emp_id}).fetchone()
 
             # Get full salary history
-            history_query = text("SELECT historyid, empno, totalsalary, monthyear FROM salary_history WHERE empno = :emp_id")
+            history_query = text("SELECT historyid, empno, totalsalary, monthyear FROM salary_history WHERE empno = :emp_id ORDER BY monthyear ASC")
             history_results = db.session.execute(history_query, {'emp_id': emp_id}).fetchall()
 
             if emp_name_result and history_results:
@@ -200,15 +186,18 @@ def salary_history():
                 previous_amount = None
                 for row in history_results:
                     amount = row[2]
-                    change = 0 if previous_amount is None else amount - previous_amount
+                    if previous_amount is None:
+                        change = 0  
+                    else: 
+                        change= amount - previous_amount
                     salary_data['history'].append({
                         'historyid': row[0],
                         'amount': amount,
-                        'date': row[3],  # assuming monthyear is a string like "May 2024"
+                        'date': row[3],
                         'change': change,
                         'change_formatted': f"{'+' if change >= 0 else ''}{change}",
-                        'reason': 'Performance Review',  # Static or replace with actual column if available
-                        'percentage': min(100, int(amount / 1000 * 10))  # Scale bar height roughly
+                        'reason': 'Performance Review',  
+                        'percentage': min(100, int(amount / 100 ))  # Scale bar height roughly
                     })
                     previous_amount = amount
 
@@ -301,7 +290,10 @@ def add_employee():
             return render_template('add_employee.html', error='All fields are required.')
 
         try:
-            # Optional: Validate foreign keys before insert (can be expanded)
+            # what this 1 do : It checks: "Is there any department in the database with this DeptID?"
+            #    If yes → it returns something like (1,) → .first() gives you a result.
+            # If no → it returns None.
+
             dept_exists = db.session.execute(
                 text("SELECT 1 FROM department WHERE DeptID = :dept_id"),
                 {'dept_id': department_id}
@@ -333,7 +325,8 @@ def add_employee():
             return render_template('add_employee.html', success='Employee added successfully.')
 
         except Exception as e:
-            db.session.rollback()
+            #rollback cancel insertion if any error occurs
+            db.session.rollback() 
             return render_template('add_employee.html', error=f"Error: {str(e)}")
 
     return render_template('add_employee.html')
